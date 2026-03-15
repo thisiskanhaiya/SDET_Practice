@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Hub</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #007acc;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    main {
+      padding: 2rem;
+    }
+    section {
+      margin-bottom: 2rem;
+    }
+    h2 {
+      color: #007acc;
+      cursor: pointer;
+      border-bottom: 2px solid #007acc;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Dropdown Content */
+    .dropdown-content {
+      display: none;
+      margin-top: 1rem;
+    }
+    .dropdown-content.active {
+      display: block;
+    }
+
+    /* Task Styles */
+    .task-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .task-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .task-card h3 {
+      margin-top: 0;
+    }
+    .task-card p {
+      margin: 0.5rem 0;
+    }
+    .task-card ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.5rem;
+    }
+    .task-card ul li {
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Learning Hub</h1>
+  </header>
+  <main>
+    <!-- Selenium WebDriver Practice Section -->
+    <section id="selenium-webdriver">
+      <h2 onclick="toggleDropdown('seleniumDropdown')">Selenium WebDriver Practice</h2>
+      <div class="dropdown-content" id="seleniumDropdown">
+        <label for="difficultyFilter">Filter by Difficulty:</label>
+        <select id="difficultyFilter" onchange="filterTasks()">
+          <option value="all">All</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
+        <div class="task-container" id="taskContainer"></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Task Data
+    const tasks = [
+  {
+    "id": 1,
+    "title": "Open a Page & Read Title",
+    "goal": "Launch a browser and validate page title",
+    "url": "https://example.com/",
+    "steps": [
+      "Launch Chrome",
+      "Navigate to the URL",
+      "Fetch page title",
+      "Compare it with expected"
+    ],
+    "acceptanceCriteria": ["Title equals \"Example Domain\""],
+    "difficulty": "Beginner",
+    "tags": ["basics", "navigation"]
+  },
+  {
+    "id": 2,
+    "title": "First Real Page Interaction",
+    "goal": "Locate and click links using simple locators",
+    "url": "https://the-internet.herokuapp.com/",
+    "steps": [
+      "Click \"Form Authentication\"",
+      "Verify login page header text"
+    ],
+    "acceptanceCriteria": ["Header equals \"Login Page\""],
+    "difficulty": "Beginner",
+    "tags": ["locators", "links"]
+  },
+  {
+    "id": 3,
+    "title": "CSS Selector Practice",
+    "goal": "Practice locating via CSS selectors",
+    "url": "https://the-internet.herokuapp.com/add_remove_elements/",
+    "steps": [
+      "Click \"Add Element\" three times",
+      "Count \"Delete\" buttons",
+      "Delete one button"
+    ],
+    "acceptanceCriteria": ["Delete buttons count decreases by one"],
+    "difficulty": "Beginner",
+    "tags": ["locators", "css"]
+  },
+  {
+    "id": 4,
+    "title": "XPath Locator Practice",
+    "goal": "Use relative/dynamic XPath",
+    "url": "https://the-internet.herokuapp.com/checkboxes",
+    "steps": [
+      "Locate checkboxes with relative XPath",
+      "Toggle selection",
+      "Verify state change"
+    ],
+    "acceptanceCriteria": ["Checkbox state matches intended selection"],
+    "difficulty": "Beginner",
+    "tags": ["locators", "xpath"]
+  },
+  {
+    "id": 5,
+    "title": "Handling JavaScript Alerts",
+    "goal": "Handle alert, confirm, and prompt",
+    "url": "https://the-internet.herokuapp.com/javascript_alerts",
+    "steps": [
+      "Trigger JS alert and accept",
+      "Trigger confirm and dismiss",
+      "Trigger prompt, type input, accept"
+    ],
+    "acceptanceCriteria": ["Result text reflects each action"],
+    "difficulty": "Beginner",
+    "tags": ["alerts"]
+  },
+  {
+    "id": 6,
+    "title": "Frames & iFrames",
+    "goal": "Switch to iframe and interact",
+    "url": "https://the-internet.herokuapp.com/iframe",
+    "steps": [
+      "Switch by id/name/WebElement",
+      "Type inside editor",
+      "Switch back and verify"
+    ],
+    "acceptanceCriteria": ["Text persists in editor", "Main DOM accessible"],
+    "difficulty": "Beginner",
+    "tags": ["frames"]
+  },
+  {
+    "id": 7,
+    "title": "Multiple Windows/Tabs",
+    "goal": "Switch window by handle",
+    "url": "https://the-internet.herokuapp.com/windows",
+    "steps": [
+      "Open new window",
+      "Switch to child",
+      "Assert text \"New Window\"",
+      "Close child and return"
+    ],
+    "acceptanceCriteria": ["No window-handle errors", "Text assertion passes"],
+    "difficulty": "Beginner",
+    "tags": ["windows"]
+  },
+  {
+    "id": 8,
+    "title": "Mouse Actions",
+    "goal": "Double-click, right-click, single-click",
+    "url": "https://demoqa.com/buttons",
+    "steps": [
+      "Double-click button",
+      "Right-click button",
+      "Single-click dynamic button"
+    ],
+    "acceptanceCriteria": ["Success messages appear for all actions"],
+    "difficulty": "Beginner",
+    "tags": ["actions"]
+  },
+  {
+    "id": 9,
+    "title": "Dropdowns with Select",
+    "goal": "Use Select to choose options",
+    "url": "https://the-internet.herokuapp.com/dropdown",
+    "steps": [
+      "Select by visible text",
+      "Select by value",
+      "Select by index"
+    ],
+    "acceptanceCriteria": ["getFirstSelectedOption() matches expected"],
+    "difficulty": "Beginner",
+    "tags": ["forms"]
+  },
+  {
+    "id": 10,
+    "title": "Navigation & Links",
+    "goal": "Navigate back/forward/refresh and new tab",
+    "url": "https://demoqa.com/links",
+    "steps": [
+      "Click Home to open new tab",
+      "Switch to new tab and verify",
+      "Back, forward, refresh on original tab"
+    ],
+    "acceptanceCriteria": ["Correct URLs at each step", "New tab verified"],
+    "difficulty": "Beginner",
+    "tags": ["navigation", "tabs"]
+  },
+  {
+    "id": 11,
+    "title": "Checkboxes & Radios",
+    "goal": "Manipulate and assert selection",
+    "url": "https://demoqa.com/radio-button",
+    "steps": [
+      "Select \"Yes\" radio",
+      "Verify result text"
+    ],
+    "acceptanceCriteria": ["Radio result shows \"Yes\""],
+    "difficulty": "Beginner",
+    "tags": ["forms"]
+  },
+  {
+    "id": 12,
+    "title": "Input Value vs. Text",
+    "goal": "Understand getAttribute('value') vs getText()",
+    "url": "https://the-internet.herokuapp.com/inputs",
+    "steps": [
+      "Type 123",
+      "Replace using CTRL+A → 456",
+      "Compare value via getAttribute and getText"
+    ],
+    "acceptanceCriteria": ["Value reflects 456 via getAttribute('value')"],
+    "difficulty": "Beginner",
+    "tags": ["forms"]
+  },
+  {
+    "id": 13,
+    "title": "Implicit Wait Basics",
+    "goal": "Apply implicit wait and observe behaviour",
+    "url": "https://the-internet.herokuapp.com/dynamic_loading/1",
+    "steps": [
+      "Set small implicit wait",
+      "Click Start",
+      "Attempt to find final text"
+    ],
+    "acceptanceCriteria": ["Record observation: implicit wait limitations"],
+    "difficulty": "Beginner",
+    "tags": ["waits"]
+  },
+  {
+    "id": 14,
+    "title": "Explicit Wait – Visibility",
+    "goal": "Stabilize flaky elements with WebDriverWait",
+    "url": "https://the-internet.herokuapp.com/dynamic_loading/2",
+    "steps": [
+      "Click Start",
+      "Wait for visibility of \"Hello World!\""
+    ],
+    "acceptanceCriteria": ["Assertion passes using explicit wait only"],
+    "difficulty": "Beginner",
+    "tags": ["waits"]
+  },
+  {
+    "id": 15,
+    "title": "Fluent Wait",
+    "goal": "Custom polling & ignored exceptions",
+    "url": "https://the-internet.herokuapp.com/dynamic_loading/2",
+    "steps": [
+      "Implement FluentWait with polling",
+      "Ignore NoSuchElementException"
+    ],
+    "acceptanceCriteria": ["Element found; retries observed in logs"],
+    "difficulty": "Intermediate",
+    "tags": ["waits"]
+  },
+  {
+    "id": 16,
+    "title": "Document Ready Helper",
+    "goal": "Wait for document.readyState === 'complete'",
+    "url": "https://the-internet.herokuapp.com/",
+    "steps": [
+      "Create waitForPageToLoad() JS-based helper",
+      "Call after navigation"
+    ],
+    "acceptanceCriteria": ["Helper returns consistently without timeouts"],
+    "difficulty": "Intermediate",
+    "tags": ["waits", "javascript"]
+  },
+  {
+    "id": 17,
+    "title": "Retry on Transient Failure",
+    "goal": "Implement simple retry logic",
+    "url": "https://the-internet.herokuapp.com/notification_message_rendered",
+    "steps": [
+      "Click until message equals \"Action successful\"",
+      "Max retries = 3"
+    ],
+    "acceptanceCriteria": ["Pass in ≤3 tries or fail with clear reason"],
+    "difficulty": "Intermediate",
+    "tags": ["retry"]
+  },
+  {
+    "id": 18,
+    "title": "Mouse Hover – Reveal UI",
+    "goal": "Hover to reveal captions",
+    "url": "https://the-internet.herokuapp.com/hovers",
+    "steps": [
+      "Hover each card",
+      "Assert caption visibility"
+    ],
+    "acceptanceCriteria": ["Caption text visible on hover"],
+    "difficulty": "Beginner",
+    "tags": ["actions"]
+  },
+  {
+    "id": 19,
+    "title": "Dynamic Controls",
+    "goal": "Wait for removal/addition and enable/disable",
+    "url": "https://the-internet.herokuapp.com/dynamic_controls",
+    "steps": [
+      "Remove checkbox and wait",
+      "Add checkbox and wait",
+      "Enable input and type, then disable"
+    ],
+    "acceptanceCriteria": ["States and messages correct post-wait"],
+    "difficulty": "Intermediate",
+    "tags": ["waits", "dynamic"]
+  },
+  {
+    "id": 20,
+    "title": "Tooltips",
+    "goal": "Verify tooltip content",
+    "url": "https://demoqa.com/tool-tips",
+    "steps": [
+      "Hover button and text field",
+      "Validate tooltip text"
+    ],
+    "acceptanceCriteria": ["Tooltip text equals expected"],
+    "difficulty": "Intermediate",
+    "tags": ["actions"]
+  },
+  {
+    "id": 21,
+    "title": "Hidden & Dynamic Elements",
+    "goal": "Assert appearance/disappearance with waits",
+    "url": "https://the-internet.herokuapp.com/dynamic_loading/2",
+    "steps": [
+      "Trigger dynamic element",
+      "Wait for visibility, then invisibility"
+    ],
+    "acceptanceCriteria": ["Accurate visible/hidden assertions"],
+    "difficulty": "Intermediate",
+    "tags": ["waits", "dynamic"]
+  },
+  {
+    "id": 22,
+    "title": "JavaScript Executor – Scroll & Click",
+    "goal": "Use JS to interact when standard click fails",
+    "url": "https://demoqa.com/links",
+    "steps": [
+      "Scroll element into view via JS",
+      "Perform JS click"
+    ],
+    "acceptanceCriteria": ["Action executed and verified"],
+    "difficulty": "Intermediate",
+    "tags": ["javascript", "actions"]
+  },
+  {
+    "id": 23,
+    "title": "Shadow DOM (Open)",
+    "goal": "Access shadow root content",
+    "url": "https://the-internet.herokuapp.com/shadowdom",
+    "steps": [
+      "Locate shadow host",
+      "Use JS to query inside shadow root"
+    ],
+    "acceptanceCriteria": ["Retrieve text from shadow content"],
+    "difficulty": "Intermediate",
+    "tags": ["shadow-dom"]
+  },
+  {
+    "id": 24,
+    "title": "File Upload",
+    "goal": "Upload using input[type=file]",
+    "url": "https://the-internet.herokuapp.com/upload",
+    "steps": [
+      "sendKeys(filePath) to file input",
+      "Submit and verify"
+    ],
+    "acceptanceCriteria": ["Uploaded file name displayed correctly"],
+    "difficulty": "Intermediate",
+    "tags": ["upload"]
+  },
+  {
+    "id": 25,
+    "title": "File Download",
+    "goal": "Auto-download to custom directory",
+    "url": "https://the-internet.herokuapp.com/download",
+    "steps": [
+      "Configure Chrome download dir",
+      "Click file and verify download"
+    ],
+    "acceptanceCriteria": ["File exists and size > 0"],
+    "difficulty": "Intermediate",
+    "tags": ["download"]
+  },
+  {
+    "id": 26,
+    "title": "Tables – Read & Edit/Delete Row",
+    "goal": "Identify row by value and act",
+    "url": "https://demoqa.com/webtables",
+    "steps": [
+      "Fetch headers and rows",
+      "Find row by email",
+      "Click edit/delete on that row"
+    ],
+    "acceptanceCriteria": ["Correct row targeted and action reflected"],
+    "difficulty": "Intermediate",
+    "tags": ["tables"]
+  },
+  {
+    "id": 27,
+    "title": "Pagination Table",
+    "goal": "Navigate to Nth page and find row",
+    "url": "https://leafground.com/table.xhtml",
+    "steps": [
+      "Use paginator to go to page 2/3",
+      "Locate row by column value"
+    ],
+    "acceptanceCriteria": ["Correct page and row identified"],
+    "difficulty": "Intermediate",
+    "tags": ["tables"]
+  },
+  {
+    "id": 28,
+    "title": "Date Picker – Future Date",
+    "goal": "Select a date 45 days from today",
+    "url": "https://demoqa.com/date-picker",
+    "steps": [
+      "Compute target date",
+      "Navigate months",
+      "Pick day"
+    ],
+    "acceptanceCriteria": ["Input value matches target date"],
+    "difficulty": "Intermediate",
+    "tags": ["date-picker"]
+  },
+  {
+    "id": 29,
+    "title": "Relative Locators (Selenium 4)",
+    "goal": "Use above/below/near/leftOf/rightOf",
+    "url": "https://demoqa.com/automation-practice-form",
+    "steps": [
+      "Locate via relative strategy",
+      "Interact with located element"
+    ],
+    "acceptanceCriteria": ["Action succeeds using relative locator"],
+    "difficulty": "Intermediate",
+    "tags": ["relative", "locators"]
+  },
+  {
+    "id": 30,
+    "title": "Broken Images/Links",
+    "goal": "Detect broken images and links",
+    "url": "https://the-internet.herokuapp.com/broken_images",
+    "steps": [
+      "Check image naturalWidth via JS",
+      "Validate broken link indicators (also: https://demoqa.com/broken)"
+    ],
+    "acceptanceCriteria": ["Broken resources identified correctly"],
+    "difficulty": "Intermediate",
+    "tags": ["validation"]
+  },
+  {
+    "id": 31,
+    "title": "Assertions – Hard vs Soft",
+    "goal": "Use hard and soft assertions",
+    "url": "https://example.com/",
+    "steps": [
+      "Create test with multiple verifications",
+      "Compare behavior: halt vs collect"
+    ],
+    "acceptanceCriteria": ["SoftAssert collects failures in one test"],
+    "difficulty": "Intermediate",
+    "tags": ["assertions"]
+  },
+  {
+    "id": 32,
+    "title": "Parameterization via testng.xml",
+    "goal": "Read env/baseUrl from suite file",
+    "url": "https://the-internet.herokuapp.com/",
+    "steps": [
+      "Define baseUrl param",
+      "Read param in test and navigate"
+    ],
+    "acceptanceCriteria": ["Test runs for different baseUrl values"],
+    "difficulty": "Intermediate",
+    "tags": ["suite", "data"]
+  },
+  {
+    "id": 33,
+    "title": "DataProvider – Multiple Logins",
+    "goal": "Run same test for multiple datasets",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Provide users: standard, locked_out",
+      "Assert success or error accordingly"
+    ],
+    "acceptanceCriteria": ["Outcomes match dataset expectations"],
+    "difficulty": "Intermediate",
+    "tags": ["data"]
+  },
+  {
+    "id": 34,
+    "title": "External Test Data (CSV/Excel)",
+    "goal": "Load data from file (no hardcoding)",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Read credentials from CSV/Excel",
+      "Feed test dynamically"
+    ],
+    "acceptanceCriteria": ["Tests consume external data successfully"],
+    "difficulty": "Intermediate",
+    "tags": ["data"]
+  },
+  {
+    "id": 35,
+    "title": "Before/After Hooks",
+    "goal": "Driver lifecycle per test",
+    "url": "https://example.com/",
+    "steps": [
+      "Use @BeforeMethod to create driver",
+      "@AfterMethod to quit driver"
+    ],
+    "acceptanceCriteria": ["Each test starts fresh; drivers cleaned up"],
+    "difficulty": "Beginner",
+    "tags": ["suite"]
+  },
+  {
+    "id": 36,
+    "title": "Reusable Helpers – Driver & Waits",
+    "goal": "Create DriverFactory and WaitUtils",
+    "url": "https://example.com/",
+    "steps": [
+      "Centralize driver creation",
+      "Centralize explicit wait methods"
+    ],
+    "acceptanceCriteria": ["No driver/wait duplication in tests"],
+    "difficulty": "Intermediate",
+    "tags": ["suite", "waits"]
+  },
+  {
+    "id": 37,
+    "title": "Screenshot on Failure",
+    "goal": "Save PNG with test name and timestamp",
+    "url": "https://example.com/",
+    "steps": [
+      "Capture screenshot in @AfterMethod on failure",
+      "Store in /screenshots"
+    ],
+    "acceptanceCriteria": ["File saved when assertion fails"],
+    "difficulty": "Intermediate",
+    "tags": ["reporting"]
+  },
+  {
+    "id": 38,
+    "title": "Logging",
+    "goal": "Add Java logging to tests",
+    "url": "https://example.com/",
+    "steps": [
+      "Log each major action at INFO level",
+      "Include start/stop timestamps"
+    ],
+    "acceptanceCriteria": ["Readable logs for every test step"],
+    "difficulty": "Beginner",
+    "tags": ["logging"]
+  },
+  {
+    "id": 39,
+    "title": "Retry Analyzer (TestNG)",
+    "goal": "Retry failed tests once",
+    "url": "https://example.com/",
+    "steps": [
+      "Implement IRetryAnalyzer",
+      "Attach to flaky tests"
+    ],
+    "acceptanceCriteria": ["Flaky test passes on retry when appropriate"],
+    "difficulty": "Intermediate",
+    "tags": ["retry", "suite"]
+  },
+  {
+    "id": 40,
+    "title": "Parallel Execution",
+    "goal": "Run tests in parallel by classes/methods",
+    "url": "https://example.com/",
+    "steps": [
+      "Configure threadCount in testng.xml",
+      "Observe parallel timestamps"
+    ],
+    "acceptanceCriteria": ["Parallelism visible; tests remain stable"],
+    "difficulty": "Advanced",
+    "tags": ["parallel", "suite"]
+  },
+  {
+    "id": 41,
+    "title": "Swag Labs – Positive Login",
+    "goal": "Successful login to inventory page",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Login with standard_user/secret_sauce",
+      "Verify URL contains /inventory.html"
+    ],
+    "acceptanceCriteria": ["Inventory page visible; title \"Swag Labs\""],
+    "difficulty": "Beginner",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 42,
+    "title": "Swag Labs – Negative Logins",
+    "goal": "Validate error messages for invalid users",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Attempt login with locked_out_user",
+      "Attempt login with wrong password",
+      "Attempt with blank fields"
+    ],
+    "acceptanceCriteria": ["Correct error strings under .error-message-container"],
+    "difficulty": "Beginner",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 43,
+    "title": "Swag Labs – Add to Cart & Verify",
+    "goal": "Add items and verify in cart",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Add two items",
+      "Assert cart badge count",
+      "Verify item names in cart"
+    ],
+    "acceptanceCriteria": ["Counts and names match"],
+    "difficulty": "Intermediate",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 44,
+    "title": "Swag Labs – Checkout End-to-End",
+    "goal": "Complete checkout and verify success",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Proceed to checkout",
+      "Fill user info",
+      "Verify totals and finish"
+    ],
+    "acceptanceCriteria": ["Success header: \"Thank you for your order!\""],
+    "difficulty": "Intermediate",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 45,
+    "title": "Swag Labs – Sort & Validate",
+    "goal": "Validate price sorting (low→high)",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Change sort to Price (low to high)",
+      "Extract prices and assert ascending order"
+    ],
+    "acceptanceCriteria": ["Sorting validated programmatically"],
+    "difficulty": "Intermediate",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 46,
+    "title": "Swag Labs – Remove & Empty Cart",
+    "goal": "Remove items and verify cart is empty",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Add items",
+      "Remove from cart page",
+      "Verify badge disappears and no items remain"
+    ],
+    "acceptanceCriteria": ["Cart empty"],
+    "difficulty": "Beginner",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 47,
+    "title": "Swag Labs – Logout",
+    "goal": "Logout from menu and verify",
+    "url": "https://www.saucedemo.com/",
+    "steps": [
+      "Open menu",
+      "Click Logout",
+      "Assert return to login"
+    ],
+    "acceptanceCriteria": ["Back on login page with login button visible"],
+    "difficulty": "Beginner",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 48,
+    "title": "OrangeHRM – Login",
+    "goal": "Login to dashboard",
+    "url": "https://opensource-demo.orangehrmlive.com/",
+    "steps": [
+      "Login with Admin/admin123",
+      "Verify dashboard"
+    ],
+    "acceptanceCriteria": ["Dashboard visible; user shows Admin"],
+    "difficulty": "Intermediate",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 49,
+    "title": "OrangeHRM – Add Employee (PIM)",
+    "goal": "Create and find employee",
+    "url": "https://opensource-demo.orangehrmlive.com/",
+    "steps": [
+      "Go to PIM → Add Employee",
+      "Use unique name (timestamp suffix)",
+      "Search in Employee List"
+    ],
+    "acceptanceCriteria": ["Record appears in results"],
+    "difficulty": "Advanced",
+    "tags": ["workflow"]
+  },
+  {
+    "id": 50,
+    "title": "OrangeHRM – Edit & Delete Employee",
+    "goal": "Update job data and delete",
+    "url": "https://opensource-demo.orangehrmlive.com/",
+    "steps": [
+      "Update job title/location",
+      "Verify persistence after refresh",
+      "Delete employee",
+      "Confirm not found in search"
+    ],
+    "acceptanceCriteria": ["Update persists; deletion verified"],
+    "difficulty": "Advanced",
+    "tags": ["workflow"]
+  }
+];
+
+    // Render Tasks
+    const taskContainer = document.getElementById("taskContainer");
+    function renderTasks(filteredTasks) {
+      taskContainer.innerHTML = ""; // Clear existing tasks
+      filteredTasks.forEach(task => {
+        const taskCard = document.createElement("div");
+        taskCard.className = "task-card";
+
+        taskCard.innerHTML = `
+          <h3>${task.id}. ${task.title}</h3>
+          <p><strong>Goal:</strong> ${task.goal}</p>
+          <p><strong>URL:</strong> <a href="${task.url}" target="_blank">${task.url}</a></p>
+          <p><strong>Steps:</strong></p>
+          <ul>
+            ${task.steps.map(step => `<li>${step}</li>`).join("")}
+          </ul>
+          <p><strong>Acceptance Criteria:</strong> ${task.acceptanceCriteria.join(", ")}</p>
+          <p><strong>Difficulty:</strong> ${task.difficulty}</p>
+          <p><strong>Tags:</strong> ${task.tags.join(", ")}</p>
+        `;
+
+        taskContainer.appendChild(taskCard);
+      });
+    }
+
+    // Filter Tasks
+    function filterTasks() {
+      const difficulty = document.getElementById("difficultyFilter").value;
+      if (difficulty === "all") {
+        renderTasks(tasks); // Show all tasks
+      } else {
+        const filteredTasks = tasks.filter(task => task.difficulty === difficulty);
+        renderTasks(filteredTasks);
+      }
+    }
+
+    // Initial Render
+    renderTasks(tasks);
+
+    // Dropdown Toggle
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      dropdown.classList.toggle("active");
+    }
+  </script>
+</body>
+</html>
