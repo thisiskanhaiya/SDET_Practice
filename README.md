@@ -14,3 +14,4 @@ SDET Interview Practice Task Based Learning and Questions
 4. find largest number
 5. find second largest
 6. open google using selenium, print page , close browser
+7. SQL - Select , where , ORDER BY queries
