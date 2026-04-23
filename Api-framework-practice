@@ -1,1 +1,256 @@
-#Medhasphere-API
+# BDD Cucumber API Automation Framework - Complete Learning Guide
+
+## ✅ TASK 1: Project Structure Setup
+**Objective:** Create the complete project directory structure
+
+**Folders to Create:**
+```
+Api-framework-practice/
+├── src/
+│   ├── main/
+│   │   ├── java/com/framework/
+│   │   │   ├── api/
+│   │   │   ├── config/
+│   │   │   ├── utils/
+│   │   │   └── constants/
+│   │   └── resources/
+│   └── test/
+│       ├── java/com/framework/
+│       │   ├── runners/
+│       │   ├── stepdefs/
+│       │   └── hooks/
+│       └── resources/features/
+├── target/
+└── pom.xml
+```
+
+**File: pom.xml**
+- Language: XML
+- Contains Maven dependencies
+- Versions: Java 11, Cucumber 7.14.0, RestAssured 5.3.2, TestNG 7.8.1
+- Includes plugins for compilation and execution
+
+---
+
+## ✅ TASK 2: Create Feature Files
+**Objective:** Write BDD scenarios in Gherkin language
+
+**Create File:** `src/test/resources/features/users.feature`
+**Content Type:** Gherkin
+**Scenarios Include:**
+- Get all users
+- Get user by ID
+- Create a new user
+- Update user
+- Delete user
+
+---
+
+## ✅ TASK 3: Create Base API Class
+**Objective:** Build reusable HTTP client for API requests
+
+**Create File:** `src/main/java/com/framework/api/BaseAPI.java`
+**Methods:**
+- getRequest(endpoint)
+- postRequest(endpoint, body)
+- putRequest(endpoint, body)
+- deleteRequest(endpoint)
+- patchRequest(endpoint, body)
+
+**Features:**
+- Base URL configuration
+- Request specification setup
+- Response extraction
+- Content type handling
+
+---
+
+## ✅ TASK 4: Write Step Definitions
+**Objective:** Map Gherkin steps to Java code
+
+**Create File:** `src/test/java/com/framework/stepdefs/UserStepDefinitions.java`
+
+**Step Types to Implement:**
+- @Given steps - Set up test data (base URL, endpoint, request body)
+- @When steps - Perform API calls (GET, POST, PUT, DELETE)
+- @Then steps - Validate responses (status code, content verification)
+
+**Methods:**
+- setBaseURL(url)
+- setEndpoint(endpoint)
+- setRequestBody(data)
+- makeGetRequest()
+- makePostRequest()
+- makePutRequest()
+- makeDeleteRequest()
+- verifyStatusCode(expectedCode)
+- verifyUsersList()
+- verifyUsername(username)
+
+---
+
+## ✅ TASK 5: Create Test Runner
+**Objective:** Configure Cucumber to run feature files
+
+**Create File:** `src/test/java/com/framework/runners/TestRunner.java`
+
+**Configuration:**
+- Extend: AbstractTestNGCucumberTests
+- Features path: src/test/resources/features
+- Glue path: com.framework.stepdefs, com.framework.hooks
+- Plugins:
+  - pretty (console output)
+  - html report (target/cucumber-reports/index.html)
+  - json report (target/cucumber.json)
+  - junit report (target/cucumber.xml)
+
+**Options:**
+- monochrome = true
+- dryRun = false
+- publish = true
+
+---
+
+## ✅ TASK 6: Create Hooks
+**Objective:** Set up pre-test and post-test configurations
+
+**Create File:** `src/test/java/com/framework/hooks/Hooks.java`
+
+**Methods:**
+- @Before - setUp(Scenario)
+  - Print test start message
+  - Initialize resources
+  - Log scenario name
+
+- @After - tearDown(Scenario)
+  - Check if test passed/failed
+  - Print test end message
+  - Cleanup resources
+
+---
+
+## ✅ TASK 7: Create Configuration Manager
+**Objective:** Manage external configuration properties
+
+**Create File:** `src/main/java/com/framework/config/ConfigManager.java`
+
+**Methods:**
+- loadProperties() - Static initialization
+- getProperty(key) - Get string value
+- getProperty(key, defaultValue) - Get with default
+- getIntProperty(key) - Get integer value
+- getBooleanProperty(key) - Get boolean value
+
+**Also Create:** `src/main/resources/config.properties`
+
+**Properties:**
+- api.base.url = https://jsonplaceholder.typicode.com
+- api.connection.timeout = 10000
+- api.socket.timeout = 10000
+- test.environment = qa
+- logging.level = INFO
+
+---
+
+## ✅ TASK 8: Create Assertion Utilities
+**Objective:** Build reusable assertion methods
+
+**Create File:** `src/main/java/com/framework/utils/AssertionUtils.java`
+
+**Methods:**
+- assertStatusCode(response, expectedCode)
+- assertStatusCodeOK(response) - Assert 200
+- assertStatusCodeCreated(response) - Assert 201
+- assertResponseContains(response, text)
+- assertResponseNotNull(response)
+- assertResponseNotEmpty(response)
+- assertResponseHasJsonPath(response, jsonPath)
+
+---
+
+## ✅ TASK 9: Create Constants
+**Objective:** Store all static values
+
+**Create File:** `src/main/java/com/framework/constants/Constants.java`
+
+**HTTP Status Codes:**
+- STATUS_OK = 200
+- STATUS_CREATED = 201
+- STATUS_BAD_REQUEST = 400
+- STATUS_UNAUTHORIZED = 401
+- STATUS_NOT_FOUND = 404
+- STATUS_INTERNAL_SERVER_ERROR = 500
+
+**Headers & Content Types:**
+- CONTENT_TYPE_JSON = application/json
+- AUTHORIZATION_HEADER = Authorization
+- BEARER = Bearer 
+
+**Endpoints:**
+- USERS_ENDPOINT = /users
+- POSTS_ENDPOINT = /posts
+- COMMENTS_ENDPOINT = /comments
+
+**Timeouts:**
+- DEFAULT_TIMEOUT = 10000
+- SOCKET_TIMEOUT = 10000
+
+---
+
+## ✅ TASK 10: Create Comprehensive README
+**Objective:** Document the entire framework
+
+**Create File:** README.md
+
+**Sections:**
+- Project Overview
+- Prerequisites (Java 11+, Maven 3.6+)
+- Setup Instructions
+- How to Run Tests
+- Project Structure Explanation
+- Key Concepts (BDD, Cucumber, RestAssured)
+- Test Reports Location
+- Best Practices
+- Troubleshooting Guide
+- Resources & Links
+
+---
+
+## 📋 QUICK CHECKLIST
+
+- [ ] Task 1: Create directory structure & pom.xml
+- [ ] Task 2: Create users.feature with Gherkin scenarios
+- [ ] Task 3: Create BaseAPI.java with HTTP methods
+- [ ] Task 4: Create UserStepDefinitions.java
+- [ ] Task 5: Create TestRunner.java
+- [ ] Task 6: Create Hooks.java
+- [ ] Task 7: Create ConfigManager.java and config.properties
+- [ ] Task 8: Create AssertionUtils.java
+- [ ] Task 9: Create Constants.java
+- [ ] Task 10: Create README.md
+
+---
+
+## 🚀 AFTER ALL TASKS COMPLETED
+
+1. Run: `mvn clean install`
+2. Run: `mvn clean test`
+3. Check reports: `target/cucumber-reports/index.html`
+4. Push code to GitHub
+
+---
+
+## 📚 LEARNING OUTCOMES
+
+By completing all 10 tasks, you will have:
+✓ A complete BDD framework using Cucumber
+✓ REST API testing capabilities with RestAssured
+✓ Proper project structure following best practices
+✓ Configuration management for multiple environments
+✓ Reusable components (Base API, Utilities, Constants)
+✓ Professional test reporting
+✓ Understanding of BDD, Gherkin syntax, and automation best practices
+
+---
+
+**Status: Ready to Start! Begin with Task 1** 🎯
