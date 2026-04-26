@@ -29,7 +29,7 @@ SDET Interview Practice Task Based Learning and Questions
 1. Encapsulation (Private variables, getter setter , security + control)
 2. What is collection
 3. Difference between Array vs List ( add 3 employee arrayList try to remove observe behaviour)
-4. DSA : Remove Duplicate from array
+4. DSA : Remove Duplicate from array (hint containsKey map- frequency)
 5. move all zeros to end
 6. Selenium: open amozoan -> search laptop -> print first product title
 7. SQL : ORDER BY (ASC/DESC), LIMIT 
