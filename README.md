@@ -32,4 +32,15 @@ SDET Interview Practice Task Based Learning and Questions
 4. DSA : Remove Duplicate from array (hint containsKey map- frequency)
 5. move all zeros to end
 6. Selenium: open amozoan -> search laptop -> print first product title
-7. SQL : ORDER BY (ASC/DESC), LIMIT 
+7. SQL : ORDER BY (ASC/DESC), LIMIT
+
+#DAY_04
+1. Get stronger in Collections
+2. ArrayList and HashMap Examples and coding conepts practically
+3. When to use Map vs List , Internal thinking how it works , remove entry
+4. store employee id -> employee object
+5. Two sum problem
+6. Frequency of elements in array
+7. Implicit Wait, explicit wait
+8. Login to any site ( Username and password Logic) , clicklogin and verify something
+9. SQL
