@@ -34,7 +34,7 @@ SDET Interview Practice Task Based Learning and Questions
 6. Selenium: open amozoan -> search laptop -> print first product title
 7. SQL : ORDER BY (ASC/DESC), LIMIT
 
-#DAY_04
+# DAY_04
 1. Get stronger in Collections
 2. ArrayList and HashMap Examples and coding conepts practically
 3. When to use Map vs List , Internal thinking how it works , remove entry
